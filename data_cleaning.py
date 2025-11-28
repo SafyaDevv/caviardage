@@ -8,6 +8,7 @@ blackout_df = pandas.read_json(file)
 
 
 # ************** DATA CLEANING **************
+
 count_of_poems = len(blackout_df["poem"])
 
 #removing poems with non-alphabetical symbols
@@ -25,6 +26,8 @@ count_of_duplicate = count_of_poems - len(clean_df)
 
 #Dropping grammar-check column from cleaned dataset as it's all false values
 clean_df = clean_df.drop(columns=["grammar-check"])
+
+clean_df["poem"] = clean_df["poem"].str.strip() #removing leading/trailing whitespace characters
 
 #Function returning a pie chart showing an overview of the data cleaning process
 #Used in streamlit_app.py
