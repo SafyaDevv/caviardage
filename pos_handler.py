@@ -1,15 +1,14 @@
 import spacy
-
-import data_cleaning as data
-
-data = data.clean_df
+from data_cleaning import clean_df, blackout_df
 
 nlp = spacy.load("en_core_web_sm")
 
-
+#function to find poems marked as having good grammar in Blackout dataset
+#meaning grammar-check column is True
 def get_grammar_check(df):
     df = df[df["grammar-check"]]
-    return df["poem"].tolist() 
+    return df["poem"]
+
 
    
 

@@ -2,16 +2,12 @@ import pandas
 import numpy
 import matplotlib.pyplot as plot
 import numpy
-#from pos_handler import get_grammar_check
 
 file = "files/data_16k.json"
-
 blackout_df = pandas.read_json(file)
 
-# dataFrame.to_csv("test.csv", index=False)
 
 # ************** DATA CLEANING **************
-
 count_of_poems = len(blackout_df["poem"])
 
 #removing poems with non-alphabetical symbols
@@ -28,7 +24,7 @@ clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first")
 count_of_duplicate = count_of_poems - len(clean_df)
 
 #Dropping grammar-check column from cleaned dataset as it's all false values
-#clean_df = clean_df.drop(columns=["grammar-check"])
+clean_df = clean_df.drop(columns=["grammar-check"])
 
 #Function returning a pie chart showing an overview of the data cleaning process
 #Used in streamlit_app.py
