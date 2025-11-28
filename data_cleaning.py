@@ -2,37 +2,33 @@ import pandas
 import numpy
 import matplotlib.pyplot as plot
 import numpy
-from grammar import get_grammar_check
+#from pos_handler import get_grammar_check
 
 file = "files/data_16k.json"
 
-dataframe = pandas.read_json(file)
+blackout_df = pandas.read_json(file)
 
 # dataFrame.to_csv("test.csv", index=False)
 
 # ************** DATA CLEANING **************
 
-count_of_poems = len(dataframe["poem"]) #count before cleaning
+count_of_poems = len(blackout_df["poem"])
 
-clean_df = dataframe[~dataframe["poem"].str.contains(r"[^a-zA-Z\s]", na=False)] #keep all poems but the one in nonAlphaPoems
+#removing poems with non-alphabetical symbols
+clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)] 
+count_non_alpha_p = count_of_poems - len(clean_df)
 
-count_non_alpha_p = count_of_poems - len(clean_df) #count of poems with non-alpha characters
-
+#removing poems with single random letters that are not words (a, i, o are valid)
 clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
-                                                      na=False, case=False)] #ensure no poems have randoms single letters (aside from a, i, o since those are words)
+                                                      na=False, case=False)] 
+count_random_letter = count_of_poems - len(clean_df)
 
-count_random_letter = count_of_poems - len(clean_df) #count of poems with single random letters
-
-clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #when there is duplicated poems, only keep one of them
-
+#removing duplicate poems, keeping first occurrence
+clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") 
 count_of_duplicate = count_of_poems - len(clean_df)
 
-clean_df["poem"] = clean_df["poem"].str.strip() #removing leading/trailing spaces
-
-print(get_grammar_check(dataframe)) #prints poems marked as having good grammar in cleaned dataset (should be none)
-
 #Dropping grammar-check column from cleaned dataset as it's all false values
-clean_df = clean_df.drop(columns=["grammar-check"])
+#clean_df = clean_df.drop(columns=["grammar-check"])
 
 #Function returning a pie chart showing an overview of the data cleaning process
 #Used in streamlit_app.py
