@@ -16,10 +16,8 @@ def apply_pos(poem):
 
 #return True if any unknown POS tags (X) are found in the list of tags
 #used in generate_dataset.py to filter out poems with unrecognised words
-def check_for_unknown_pos(tag):
-    if any(t == "X" for t in tag):
-        return True
-    return False
+def has_unknown_pos(tags):
+    return any(t == "X" for t in tags)
 
 #function to find poems marked as having good grammar in Blackout dataset
 #meaning grammar-check column is True
