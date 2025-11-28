@@ -11,7 +11,6 @@ import numpy
 file = "files/data_16k.json"
 blackout_df = pandas.read_json(file)
 
-
 # Step 1: DATA CLEANING 
 # Poems with non-alphabetical symbols, single random letters, and duplicates are removed
 # + track of counts for visualisation
@@ -38,11 +37,14 @@ clean_df["poem"] = clean_df["poem"].str.strip()
 ### imported updated dataset with POS tagging applied to each poem
 clean_df_v2 = pandas.read_csv("files/better_blackout.csv")
 
-'''for pos_tags in clean_df["part-of-speech"]():
-    if("X" in pos_tags):
-        print("Found an X tag! at location ", pos_tags.iloc)'''
+### Step 3: ANALYSIS OF CLEANED DATASET
 
-### Step 4: ANALYSIS OF CLEANED DATASET
+#find all unique POS tag sequences in cleaned dataset
+unique_pos = clean_df_v2["part-of-speech"].unique()
+print(f"Number of unique part of speech sequences in dataset: {len(unique_pos)}")
+print("List of unique POS tag sequences:\n ")
+print(*unique_pos, sep='\n')
+
 
 
 ### Step 4: VISUALISATION

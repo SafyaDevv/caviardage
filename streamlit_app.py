@@ -5,29 +5,44 @@ import numpy
 
 st.title("Caviardage 📜🐙")
 
-#st.set_page_config(layout="wide") #make page full width
 
-st.write(
-    "Woop woop here comes the data.",
+### SETTING UP SIDEBAR
+page = st.sidebar.selectbox(
+    "Select a page:",
+    ["Overview", "Data Exploration"]
 )
 
-fig = plot.figure(plot_cleaning_pie_chart())
-st.pyplot(fig)
+### OVERVIEW PAGE
+if page == "Overview":
+#st.set_page_config(layout="wide") #make page full width
+    st.write(
+        "Woop woop here comes the data.",
+    )
 
-#clean_df and blackout_df are imported from data_cleaning.py
-expand = st.expander("The original Blackout dataset", icon=":material/info:")
-expand.dataframe(blackout_df, use_container_width=True)
+    fig = plot.figure(plot_cleaning_pie_chart())
+    st.pyplot(fig)
 
-expand = st.expander("The cleaned dataset", icon=":material/info:")
-expand.dataframe(clean_df, use_container_width=True)
+    #clean_df and blackout_df are imported from data_cleaning.py
+    expand = st.expander("The original Blackout dataset", icon=":material/info:")
+    expand.dataframe(blackout_df, use_container_width=True)
 
-expand = st.expander("Dataset with POS tags", icon=":material/info:")
-expand.dataframe(clean_df_v2, use_container_width=True)
+    expand = st.expander("The cleaned dataset", icon=":material/info:")
+    expand.dataframe(clean_df, use_container_width=True)
 
-#TRYING OUT TOGGLES
-#displayDataFrame = st.toggle("Display full original dataset")
+### DATA EXPLORATION PAGE
+if page == "Data Exploration":
+    st.write(
+        "Explore the cleaned dataset with POS tags.",
+    )
 
-# if displayDataFrame:
-#     st.subheader("The original Blackout dataset")
-#     st.dataframe(data, use_container_width=True)
+
+
+
+
+
+    toggle_df = st.toggle("See cleaned dataset with POS tags")
+    if toggle_df:
+        st.subheader("Cleaned Dataset with POS Tags")
+        st.dataframe(clean_df_v2, use_container_width=True)
+
 
