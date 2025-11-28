@@ -1,41 +1,45 @@
 import pandas
 import numpy
-import json
 import matplotlib.pyplot as plot
 import numpy
+from grammar import get_grammar_check
 
 file = "files/data_16k.json"
 
-dataFrame = pandas.read_json(file)
+dataframe = pandas.read_json(file)
 
 # dataFrame.to_csv("test.csv", index=False)
 
 # ************** DATA CLEANING **************
 
-countOfPoems = len(dataFrame["poem"]) #count before cleaning
+count_of_poems = len(dataframe["poem"]) #count before cleaning
 
-cleanDf = dataFrame[~dataFrame["poem"].str.contains(r"[^a-zA-Z\s]", na=False)] #keep all poems but the one in nonAlphaPoems
+clean_df = dataframe[~dataframe["poem"].str.contains(r"[^a-zA-Z\s]", na=False)] #keep all poems but the one in nonAlphaPoems
 
-countNonAlphaPoems = countOfPoems - len(cleanDf) #count of poems with non-alpha characters
+count_non_alpha_p = count_of_poems - len(clean_df) #count of poems with non-alpha characters
 
-cleanDf = cleanDf[~cleanDf["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
+clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
                                                       na=False, case=False)] #ensure no poems have randoms single letters (aside from a, i, o since those are words)
 
-countRandomLetterPoems = countOfPoems - len(cleanDf) #count of poems with single random letters
+count_random_letter = count_of_poems - len(clean_df) #count of poems with single random letters
 
-cleanDf.drop_duplicates(subset=["poem"], inplace=True, keep="first") #when there is duplicated poems, only keep one of them
+clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #when there is duplicated poems, only keep one of them
 
-countOfDuplicatePoems = countOfPoems - len(cleanDf)
+count_of_duplicate = count_of_poems - len(clean_df)
 
-cleanDf["poem"] = cleanDf["poem"].str.strip() #removing leading/trailing spaces
+clean_df["poem"] = clean_df["poem"].str.strip() #removing leading/trailing spaces
 
+print(get_grammar_check(dataframe)) #prints poems marked as having good grammar in cleaned dataset (should be none)
+
+#Dropping grammar-check column from cleaned dataset as it's all false values
+clean_df = clean_df.drop(columns=["grammar-check"])
 
 #Function returning a pie chart showing an overview of the data cleaning process
 #Used in streamlit_app.py
-def plotDataCleaningChart():
+def plot_data_cleaning_chart():
 
     labels = ['Poems with non-alphabetical symbols', 'Poems with single random letters', 'Duplicate poems', 'Poems kept in cleaned dataset']
-    numbers = (countNonAlphaPoems, countRandomLetterPoems, countOfDuplicatePoems, len(cleanDf))
+    numbers = (count_non_alpha_p, count_random_letter, count_of_duplicate, len(clean_df))
     colours = ["#959595", "#E0BEFF", "#92A2FF", "#572ba9"]
     explodedSlices = [0.2, 0.2, 0.2, 0.1] 
 
@@ -66,11 +70,3 @@ def plotDataCleaningChart():
     return fig
 
 # ******** GENERATING STATS ON CLEANED DATASET ********
-
-# *** LOOKING AT GRAMMAR CHECKS ***
-#goodGrammar = cleanDf[cleanDf["grammar-check"] == True]
-#print(len(goodGrammar)) #NO POEMS IN CLEANED DATASET ARE MARKED AS HAVING GOOD GRAMMAR
-
-#Storing Poems marked as having "good grammar" in the original dataset:
-goodGrammarOrigDf = dataFrame[dataFrame["grammar-check"]] 
-#print(goodGrammarOrigDf["poem"])
