@@ -72,5 +72,5 @@ def plotDataCleaningChart():
 #print(len(goodGrammar)) #NO POEMS IN CLEANED DATASET ARE MARKED AS HAVING GOOD GRAMMAR
 
 #Storing Poems marked as having "good grammar" in the original dataset:
-goodGrammarOrigDf = dataFrame[dataFrame["grammar-check"] == True] 
-print(goodGrammarOrigDf["poem"])
+goodGrammarOrigDf = dataFrame[dataFrame["grammar-check"]] 
+#print(goodGrammarOrigDf["poem"])

@@ -1,5 +1,5 @@
 import streamlit as st
-import data_exploration as data_exp
+import data_cleaning as data_exp
 import matplotlib.pyplot as plot
 import numpy
 
