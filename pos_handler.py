@@ -1,3 +1,6 @@
+### this utility script contains functions for pos tagging 
+### and handling grammar check & POS-related tasks
+
 import spacy
 
 nlp = spacy.load("en_core_web_sm")

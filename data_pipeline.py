@@ -1,3 +1,8 @@
+### This script is the main script for this project
+### it handles most steps of the data pipeline
+### including data loading, cleaning, POS tagging, and visualisation
+### used in streamlit_app.py for displaying data and visualisations
+
 import pandas
 import numpy
 import matplotlib.pyplot as plot

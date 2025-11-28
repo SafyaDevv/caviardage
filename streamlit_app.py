@@ -21,7 +21,6 @@ expand.dataframe(blackout_df, use_container_width=True)
 expand = st.expander("The cleaned dataset", icon=":material/info:")
 expand.dataframe(clean_df, use_container_width=True)
 
-
 expand = st.expander("Dataset with POS tags", icon=":material/info:")
 expand.dataframe(clean_df_v2, use_container_width=True)
 
