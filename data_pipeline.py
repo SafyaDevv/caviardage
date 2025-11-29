@@ -37,14 +37,16 @@ clean_df["poem"] = clean_df["poem"].str.strip()
 ### imported updated dataset with POS tagging applied to each poem
 clean_df_v2 = pandas.read_csv("files/better_blackout.csv")
 
+#get count of poems removed due to unrecognised words
+count_unknown_words = len(clean_df) - len(clean_df_v2)
+
 ### Step 3: ANALYSIS OF CLEANED DATASET
 
 #find all unique POS tag sequences in cleaned dataset
 unique_pos = clean_df_v2["part-of-speech"].unique()
-print(f"Number of unique part of speech sequences in dataset: {len(unique_pos)}")
-print("List of unique POS tag sequences:\n ")
-print(*unique_pos, sep='\n')
-
+#print(f"Number of unique part of speech sequences in dataset: {len(unique_pos)}")
+#print("List of unique POS tag sequences:\n ")
+#print(*unique_pos, sep='\n')
 
 
 ### Step 4: VISUALISATION
@@ -54,10 +56,10 @@ print(*unique_pos, sep='\n')
 used in streamlit_app.py'''
 def plot_cleaning_pie_chart():
 
-    labels = ['Poems with non-alphabetical symbols', 'Poems with single random letters', 'Duplicate poems', 'Poems kept in cleaned dataset']
-    numbers = (count_non_alpha_p, count_random_letter, count_of_duplicate, len(clean_df))
-    colours = ["#959595", "#E0BEFF", "#92A2FF", "#572ba9"]
-    explodedSlices = [0.2, 0.2, 0.2, 0.1] 
+    labels = ['Poems with non-alphabetical symbols', 'Poems with single random letters', 'Duplicate poems', 'Poems with unrecognisable words', 'Poems kept in cleaned dataset']
+    numbers = (count_non_alpha_p, count_random_letter, count_of_duplicate, count_unknown_words, len(clean_df))
+    colours = ["#959595", "#E0BEFF", "#92A2FF","#000000", "#572ba9"]
+    explodedSlices = [0.2, 0.2, 0.2, 0.2, 0.1] 
 
     # Creating plot
     fig = plot.figure(figsize=plot.figaspect(1))
@@ -66,9 +68,9 @@ def plot_cleaning_pie_chart():
         labels=None,
         explode=explodedSlices,
         colors=colours,
-        autopct="%1.0f%%",
-        pctdistance=1.15,
-        startangle=140,
+        autopct="%1.1f%%",
+        pctdistance=1.3,
+        startangle=160,
         wedgeprops={"linewidth": 1, "edgecolor": "black"},
         textprops={"fontsize": 12}
     )
@@ -76,9 +78,9 @@ def plot_cleaning_pie_chart():
     plot.legend(labels,
         title="Categories",
         loc="center left",
-        bbox_to_anchor=(0.22, 0),
+        bbox_to_anchor=(0.5, 0),
         frameon=True,
-        fontsize=9,
+        fontsize=8,
         title_fontsize=10)
 
     plot.tight_layout(pad=1.5)

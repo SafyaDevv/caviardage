@@ -19,11 +19,6 @@ def apply_pos(poem):
 def has_unknown_pos(tags):
     return any(t == "X" for t in tags)
 
-
-
-
-
-
 #function to find poems marked as having good grammar in Blackout dataset
 #meaning grammar-check column is True
 # /!\ WILL USE LATER FOR ANALYSIS LATER, why are those marked as true?/!\
