@@ -32,29 +32,31 @@ if page == "Overview":
 ### DATA EXPLORATION PAGE
 if page == "Data Exploration":
 
-    col1, col2 = st.columns(2, border=True)
     st.write(
         "Explore the dataset ✨",
         )
     
-    "🔎 Find poems with specific \"part of speech\""
-    #left column
-    with col1:
-        part_of_speech_tags = "ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ VERB".split()
+    
+    "✦•······················•✦•······················•✦"*3
 
-        selected_pos = st.selectbox(
+    "🔎 Find poems with specific \"part of speech\""
+
+    #choose how to filter poems
+    part_of_speech_tags = "ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ VERB".split()
+
+    selected_pos = st.selectbox(
             "Select a type of \"part of speech\":",
             part_of_speech_tags
         )
-    #right column
-    with col2:
-        filter = clean_df_v2["part-of-speech"].apply(
-        lambda pos: selected_pos in pos)
-        
-        filtered_poems = clean_df_v2[filter]
-        
-        st.write(f"Poems containing POS tag: **{selected_pos}**")
-        st.write(filtered_poems[["poem", "part-of-speech"]])
+    
+    #filter  poems
+    filter = clean_df_v2["part-of-speech"].apply(
+    lambda pos: selected_pos in pos)
+    filtered_poems = clean_df_v2[filter]
+
+    #display poems
+    st.write(f"Poems containing POS tag: **{selected_pos}**")
+    st.write(filtered_poems[["poem", "part-of-speech"]])
 
 
 
