@@ -1,10 +1,11 @@
 import streamlit as st
-from data_pipeline import clean_df, blackout_df, clean_df_v2, plot_cleaning_pie_chart
+# from data_pipeline import clean_df, blackout_df, clean_df_v2, plot_cleaning_pie_chart
+from data_pipeline import clean_df, clean_df_v2, plot_cleaning_pie_chart, create_dataframe
+
 import matplotlib.pyplot as plot
 import numpy
 
 st.title("Caviardage 📜🐙")
-
 
 ### SETTING UP SIDEBAR
 page = st.sidebar.selectbox(
@@ -14,14 +15,19 @@ page = st.sidebar.selectbox(
 st.sidebar.write("More stuff here?!")
 
 ### OVERVIEW PAGE
+
+uploaded_file = st.file_uploader("Upload Blackout dataset", type=["json","csv"])
+if uploaded_file is not None:
+    create_dataframe(uploaded_file, uploaded_file.type)
+
 if page == "Overview":
 #st.set_page_config(layout="wide") #make page full width
     st.write(
         "Woop woop here comes the data.",
     )
 
-    fig = plot.figure(plot_cleaning_pie_chart())
-    st.pyplot(fig)
+    #fig = plot.figure(plot_cleaning_pie_chart())
+    #st.pyplot(fig)
 
 ### DATA EXPLORATION PAGE
 if page == "Data Exploration":
@@ -50,6 +56,7 @@ if page == "Data Exploration":
     lambda pos_list: all(pos in pos_list for pos in user_selection))
     filtered_poems = clean_df_v2[filter]
 
+    #this function return the long version(s) of the part of speech tag(s) based on user selection
     def match_label_to_tag(selection):
         list_of_labels = []
         for tag in part_of_speech_tags:

@@ -1,6 +1,5 @@
 ### This script is the main script for this project
 ### it handles most steps of the data pipeline
-### including data loading, cleaning, POS tagging, and visualisation
 ### used in streamlit_app.py for displaying data and visualisations
 
 import pandas
@@ -10,29 +9,63 @@ import numpy
 
 #STEP 1: DATA INGESTION
 
-file = "files/data_16k.json"
-blackout_df = pandas.read_json(file)
+# file = "files/data_16k.json"
+# blackout_df = pandas.read_json(file)
+
+clean_df = {}
+blackout_df = {}
+count_non_alpha_p = 0
+count_random_letter = 0
+count_of_duplicate = 0
+
+
+#TEST
+def create_dataframe(file, type):
+    if type == "json":
+        blackout_df = pandas.read_json(file)
+    elif type == "csv":
+        blackout_df = pandas.read_csv(file)
+
+    count_of_poems = len(blackout_df["poem"])
+
+    #Cleaning poems that don't match criterias + keeping count of what was removed for visualisation purposes
+
+    clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)]  #alphabetical chars only
+    count_non_alpha_p = count_of_poems - len(clean_df)
+
+    clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
+                                                        na=False, case=False)] #no poems with random single letters that aren't words
+    count_random_letter = count_of_poems - len(clean_df)
+
+    clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #if there is duplicates, only keep first occurrence
+    count_of_duplicate = count_of_poems - len(clean_df)
+
+    clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
+
+    return clean_df
+
+#TEST
 
 # Step 2: DATA PREPREPROCESSING / CLEANING
 
 # Poems with non-alphabetical symbols, single random letters, and duplicates are removed
 # + track of counts for visualisation
 
-count_of_poems = len(blackout_df["poem"])
+# count_of_poems = len(blackout_df["poem"])
 
-#Cleaning poems that don't match criterias + keeping count of what was removed for visualisation purposes
+# #Cleaning poems that don't match criterias + keeping count of what was removed for visualisation purposes
 
-clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)]  #alphabetical chars only
-count_non_alpha_p = count_of_poems - len(clean_df)
+# clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)]  #alphabetical chars only
+# count_non_alpha_p = count_of_poems - len(clean_df)
 
-clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
-                                                      na=False, case=False)] #no poems with random single letters that aren't words
-count_random_letter = count_of_poems - len(clean_df)
+# clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
+#                                                       na=False, case=False)] #no poems with random single letters that aren't words
+# count_random_letter = count_of_poems - len(clean_df)
 
-clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #if there is duplicates, only keep first occurrence
-count_of_duplicate = count_of_poems - len(clean_df)
+# clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #if there is duplicates, only keep first occurrence
+# count_of_duplicate = count_of_poems - len(clean_df)
 
-clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
+# clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
 
 
 ### Step 3: DATA PROCESSING
