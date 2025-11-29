@@ -71,6 +71,9 @@ if page == "Data Exploration":
     
 
     #filter poems, only show poems with selected polarity
+    if selection == None:
+        filtered_poems_s = clean_df_v2
+
     if selection == "Negative emotion":
         filtered_poems_s = clean_df_v2[clean_df_v2["sentiment_polarity"] < 0]
 
