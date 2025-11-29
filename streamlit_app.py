@@ -56,13 +56,40 @@ if page == "Data Exploration":
     "✦•······················•✦•······················•✦"*3
 
     "🔎 Find poems with specific sentiment expressed"
-    
+
     #WILL USE SEGMENTED CONTROL :o
+
+    #choose how to filter poems
+    sentiment_tags = ["Negative emotion", "Positive emotion", "Neutral emotion"]
+ #"Objective", "Subjective", "Neutral Objectivity
+
+    selection = st.segmented_control(
+            "Select type of emotion",
+            sentiment_tags,
+            default="Negative emotion"
+        )
+    
+
+    #filter poems, only show poems with selected polarity
+    if selection == "Negative emotion":
+        filtered_poems_s = clean_df_v2[clean_df_v2["sentiment_polarity"] < 0]
+
+    if selection == "Positive emotion":
+        filtered_poems_s = clean_df_v2[clean_df_v2["sentiment_polarity"] > 0]
+
+    if selection == "Neutral emotion":
+        filtered_poems_s = clean_df_v2[clean_df_v2["sentiment_polarity"] == 0]
+
+    #display poems
+    st.write(f"Poems with: **{selection}**")
+    "There are ", len(filtered_poems_s), " poems to display."
+    st.write(filtered_poems_s[["poem", "sentiment_polarity"]])
+    
 
 ### VERSION HISTORY PAGE
 if page == "See all versions of dataset":
 
-    expand = st.expander("Cleaned Dataset with POS Tags", icon=":material/info:")
+    expand = st.expander("Cleaned Dataset with POS Tags & Sentiment scores", icon=":material/info:")
     expand.dataframe(clean_df_v2, use_container_width=True)    
  
     expand = st.expander("The cleaned dataset", icon=":material/info:")

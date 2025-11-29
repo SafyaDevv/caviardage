@@ -4,7 +4,8 @@
 import spacy
 #from data_pipeline import blackout_df
 
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm") #!!! WILL PROBABLY WANT TO DO THIS ONLY ONCE IN ONE FILE
+
 
 # **** TOKENISATION AND PART-OF-SPEECH TAGGING ****
 
