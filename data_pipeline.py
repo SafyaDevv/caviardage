@@ -8,39 +8,41 @@ import numpy
 import matplotlib.pyplot as plot
 import numpy
 
+#STEP 1: DATA INGESTION
+
 file = "files/data_16k.json"
 blackout_df = pandas.read_json(file)
 
-# Step 1: DATA CLEANING 
+# Step 2: DATA PREPREPROCESSING / CLEANING
+
 # Poems with non-alphabetical symbols, single random letters, and duplicates are removed
 # + track of counts for visualisation
 
 count_of_poems = len(blackout_df["poem"])
 
-#removing poems with non-alphabetical symbols
-clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)] 
+#Cleaning poems that don't match criterias + keeping count of what was removed for visualisation purposes
+
+clean_df = blackout_df[~blackout_df["poem"].str.contains(r"[^a-zA-Z\s]", na=False)]  #alphabetical chars only
 count_non_alpha_p = count_of_poems - len(clean_df)
 
-#removing poems with single random letters that are not words (a, i, o are valid)
 clean_df = clean_df[~clean_df["poem"].str.contains(r"\b(?![aio]\b)[a-z]\b", 
-                                                      na=False, case=False)] 
+                                                      na=False, case=False)] #no poems with random single letters that aren't words
 count_random_letter = count_of_poems - len(clean_df)
 
-#removing duplicate poems, keeping first occurrence
-clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") 
+clean_df.drop_duplicates(subset=["poem"], inplace=True, keep="first") #if there is duplicates, only keep first occurrence
 count_of_duplicate = count_of_poems - len(clean_df)
 
-clean_df["poem"] = clean_df["poem"].str.strip()
+clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
 
 
-### Step 2: PART-OF-SPEECH TAGGING
-### imported updated dataset with POS tagging applied to each poem
-clean_df_v2 = pandas.read_csv("files/better_blackout.csv")
+### Step 3: DATA PROCESSING
 
-#get count of poems removed due to unrecognised words
-count_unknown_words = len(clean_df) - len(clean_df_v2)
+#updated dataset n/ new features applied to each poem, done in generate_dataset.py
+clean_df_v2 = pandas.read_csv("files/better_blackout.csv") 
 
-### Step 3: ANALYSIS OF CLEANED DATASET
+count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed during NLP in pos_handler.pos
+
+### Step 4: ANALYSIS
 
 #find all unique POS tag sequences in cleaned dataset
 unique_pos = clean_df_v2["part-of-speech"].unique()
@@ -49,7 +51,7 @@ unique_pos = clean_df_v2["part-of-speech"].unique()
 #print(*unique_pos, sep='\n')
 
 
-### Step 4: VISUALISATION
+### Step 5: VISUALISATION
 ### used in streamlit_app.py and report
 
 '''Function returning a pie chart showing an overview of the data cleaning process

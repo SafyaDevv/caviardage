@@ -37,19 +37,30 @@ if page == "Data Exploration":
 
     #choose how to filter poems
     part_of_speech_tags = "ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ VERB".split()
+    part_of_speech_labels = "Adjective Adposition Adverb Auxiliary Coordinating_conjunction Determiner Interjection Noun Numeral Particle Pronoun Proper_noun Punctuation Subordinating_conjunction Verb".split()
 
-    selected_pos = st.multiselect(
+    user_selection = st.multiselect(
             "Select a type of \"part of speech\":",
-            part_of_speech_tags
+            part_of_speech_tags,
+            default = None
         )
     
     #filter poems, only show poems with selected pos tags
     filter = clean_df_v2["part-of-speech"].apply(
-    lambda pos_list: all(pos in pos_list for pos in selected_pos))
+    lambda pos_list: all(pos in pos_list for pos in user_selection))
     filtered_poems = clean_df_v2[filter]
 
+    def match_label_to_tag(selection):
+        list_of_labels = []
+        for tag in part_of_speech_tags:
+            if tag in selection:
+                list_of_labels.append(part_of_speech_labels[part_of_speech_tags.index(tag)])
+        return list_of_labels
+
+    selection_label = match_label_to_tag(user_selection)
+        
     #display poems
-    st.write(f"Poems containing POS tag *(in any order)*: **{selected_pos}**")
+    st.write(f"Poems containing *(in any order)*: **{selection_label}**")
     "There are ", len(filtered_poems), " poems to display."
     st.write(filtered_poems[["poem", "part-of-speech"]])
 
