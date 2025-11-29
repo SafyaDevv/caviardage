@@ -37,18 +37,19 @@ if page == "Data Exploration":
     #choose how to filter poems
     part_of_speech_tags = "ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ VERB".split()
 
-    selected_pos = st.selectbox(
+    selected_pos = st.multiselect(
             "Select a type of \"part of speech\":",
             part_of_speech_tags
         )
     
-    #filter  poems
+    #filter poems, only show poems with selected pos tags
     filter = clean_df_v2["part-of-speech"].apply(
-    lambda pos: selected_pos in pos)
+    lambda pos_list: all(pos in pos_list for pos in selected_pos))
     filtered_poems = clean_df_v2[filter]
 
     #display poems
-    st.write(f"Poems containing POS tag: **{selected_pos}**")
+    st.write(f"Poems containing POS tag *(in any order)*: **{selected_pos}**")
+    "There are ", len(filtered_poems), " poems to display."
     st.write(filtered_poems[["poem", "part-of-speech"]])
 
 ### VERSION HISTORY PAGE
