@@ -9,8 +9,9 @@ st.title("Caviardage 📜🐙")
 ### SETTING UP SIDEBAR
 page = st.sidebar.selectbox(
     "Select a page:",
-    ["Overview", "Data Exploration", "See all versions of dataset"]
-)
+    ["Overview", "Data Exploration", "See all versions of dataset"],
+    )
+st.sidebar.write("More stuff here?!")
 
 ### OVERVIEW PAGE
 if page == "Overview":
@@ -52,6 +53,12 @@ if page == "Data Exploration":
     "There are ", len(filtered_poems), " poems to display."
     st.write(filtered_poems[["poem", "part-of-speech"]])
 
+    "✦•······················•✦•······················•✦"*3
+
+    "🔎 Find poems with specific sentiment expressed"
+    
+    #WILL USE SEGMENTED CONTROL :o
+
 ### VERSION HISTORY PAGE
 if page == "See all versions of dataset":
 
@@ -65,6 +72,5 @@ if page == "See all versions of dataset":
     expand.dataframe(blackout_df, use_container_width=True)
 
 
-    
 
 
