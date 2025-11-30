@@ -1,6 +1,5 @@
 import streamlit as st
-# from data_pipeline import clean_df, blackout_df, clean_df_v2, plot_cleaning_pie_chart
-from data_pipeline import clean_df, clean_df_v2, plot_cleaning_pie_chart, create_dataframe
+from data_pipeline import blackout_df, clean_df, clean_df_v2, plot_cleaning_pie_chart
 
 import matplotlib.pyplot as plot
 import numpy
@@ -15,19 +14,16 @@ page = st.sidebar.selectbox(
 st.sidebar.write("More stuff here?!")
 
 ### OVERVIEW PAGE
-
-uploaded_file = st.file_uploader("Upload Blackout dataset", type=["json","csv"])
-if uploaded_file is not None:
-    create_dataframe(uploaded_file, uploaded_file.type)
+  
+st.set_page_config(layout="wide") #make page full width
 
 if page == "Overview":
-#st.set_page_config(layout="wide") #make page full width
     st.write(
         "Woop woop here comes the data.",
     )
 
-    #fig = plot.figure(plot_cleaning_pie_chart())
-    #st.pyplot(fig)
+    fig = plot.figure(plot_cleaning_pie_chart())
+    st.pyplot(fig)
 
 ### DATA EXPLORATION PAGE
 if page == "Data Exploration":
@@ -37,7 +33,7 @@ if page == "Data Exploration":
         )
     
     
-    "✦•······················•✦•······················•✦"*3
+    "✦•····················•✦•····················•✦"*4
 
     "🔎 Find poems with specific \"part of speech\""
 
@@ -71,7 +67,7 @@ if page == "Data Exploration":
     "There are ", len(filtered_poems), " poems to display."
     st.write(filtered_poems[["poem", "part-of-speech"]])
 
-    "✦•······················•✦•······················•✦"*3
+    "✦•····················•✦•····················•✦"*4
 
     "🔎 Find poems with specific sentiment expressed"
 
