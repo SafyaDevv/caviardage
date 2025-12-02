@@ -6,7 +6,6 @@ import spacy
 
 nlp = spacy.load("en_core_web_sm")
 
-
 # **** TOKENISATION AND PART-OF-SPEECH TAGGING ****
 
 #function to apply POS tagging to each poem

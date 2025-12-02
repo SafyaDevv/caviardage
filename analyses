@@ -1,0 +1,12 @@
+import spacy
+from collections import Counter
+
+nlp = spacy.load("en_core_web_sm")
+
+#function to get word frequency all poems
+#do not remove stop words or anything, as poems are short strings
+def words_frequency(poem):
+    doc = nlp(poem)
+    words_frequency = [token.text
+             for token in doc]
+    return words_frequency
