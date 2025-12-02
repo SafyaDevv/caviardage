@@ -39,6 +39,7 @@ passage_subjectivity = df["passage"].apply(get_subjectivity)
 df.insert(df.columns.get_loc("passage") + 2, "passage_sentiment_polarity", passage_polarity) 
 df.insert(df.columns.get_loc("passage_sentiment_polarity") + 1, "passage_subjectivity", passage_subjectivity) 
 
+#!! To improve by counting tokens instead of using split!
 # add word counts features
 df["passage-word-count"] = df["passage"].apply(lambda passage: len(passage.split()))
 df["poem-word-count"] = df["poem"].apply(lambda poem: len(poem.split()))

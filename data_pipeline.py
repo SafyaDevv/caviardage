@@ -7,6 +7,7 @@ import numpy
 import seaborn as sea
 import matplotlib.pyplot as plot
 import numpy
+import analyses
 
 #STEP 1: DATA INGESTION
 
@@ -53,9 +54,12 @@ unique_pos = clean_df_v2["part-of-speech"].unique()
 #print("List of unique POS tag sequences:\n ")
 #print(*unique_pos, sep='\n')
 
+#word frequency
+word_frequency_poems = analyses.words_frequency(clean_df_v2["poem"].to_string())
+print(word_frequency_poems.most_common(20), "\n")
 
-
-
+word_frequency_poems = analyses.words_frequency(clean_df_v2["passage"].to_string())
+print(word_frequency_poems.most_common(20), "\n")
 
 
 ### Step 5: VISUALISATION
@@ -100,6 +104,9 @@ def plot_cleaning_pie_chart():
 # def plot_sentiment_count():
 # sea.countplot(x='')
 
+#!!! ADD WORD FREQUENCY PLOTS
+
+
 #!!!!!!!!!! SHOULD I CLEAN OUTLIERS??! OR SOMETHING LIKE THAT?!
 def plot_correlation_sentiment():
     sea.scatterplot(data = clean_df_v2, x='sentiment_polarity', 
@@ -110,4 +117,3 @@ def plot_correlation_sentiment():
     sea.heatmap(clean_df_v2)
     plot.show()
 
-plot_correlation_sentiment()
