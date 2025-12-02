@@ -4,6 +4,7 @@
 
 import pandas
 import numpy
+import seaborn as sea
 import matplotlib.pyplot as plot
 import numpy
 
@@ -41,6 +42,9 @@ clean_df_v2 = pandas.read_csv("files/better_blackout.csv")
 
 count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed during NLP in pos_handler.pos
 
+
+
+
 ### Step 4: ANALYSIS
 
 #find all unique POS tag sequences in cleaned dataset
@@ -48,6 +52,10 @@ unique_pos = clean_df_v2["part-of-speech"].unique()
 #print(f"Number of unique part of speech sequences in dataset: {len(unique_pos)}")
 #print("List of unique POS tag sequences:\n ")
 #print(*unique_pos, sep='\n')
+
+
+
+
 
 
 ### Step 5: VISUALISATION
@@ -88,4 +96,18 @@ def plot_cleaning_pie_chart():
     #plot.show()
     return fig
 
+# #!!!!!!!! FIRST I NEED TO BUCKET THE SENTIMENT PER CATEGORY (BINNING)
+# def plot_sentiment_count():
+# sea.countplot(x='')
 
+#!!!!!!!!!! SHOULD I CLEAN OUTLIERS??! OR SOMETHING LIKE THAT?!
+def plot_correlation_sentiment():
+    sea.scatterplot(data = clean_df_v2, x='sentiment_polarity', 
+                    y ='sentiment_subjectivity')
+    plot.title("Polarity of poems vs Subjectivity")
+    plot.show()
+
+    sea.heatmap(clean_df_v2)
+    plot.show()
+
+plot_correlation_sentiment()
