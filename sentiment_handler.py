@@ -14,7 +14,7 @@ def get_polarity(poem):
        return doc._.blob.sentiment.polarity
 
 #compute sentiment analysis on poem and return sbjectivity score, 
-#number between -1 and 1, -1 = subjective, 0 = neutral, 1 = objective
+#number between 0.0 and 1, 1 = subjective, 0 = objective
 def get_subjectivity(poem):
         doc = nlp(poem)
         return doc._.blob.sentiment.subjectivity

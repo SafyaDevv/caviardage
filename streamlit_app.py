@@ -2,6 +2,7 @@ import streamlit as st
 from data_pipeline import blackout_df, clean_df, clean_df_v2, plot_cleaning_pie_chart
 
 import matplotlib.pyplot as plot
+import pandas
 import numpy
 
 st.title("Caviardage 📜🐙")
@@ -74,25 +75,24 @@ if page == "Data Exploration":
     col1, col2 = st.columns(2)
 
     sentiment_tags = ["Negative emotion", "Positive emotion", "Neutral emotion"]
-    subjectivity_tags = ["Objective", "Subjective", "Neutral Objectivity"]
+    subjectivity_tags = ["Objective", "Subjective"]
 
     ###choose how to filter poems
     #left column, sentiment polarity selection
     with col1:
         polarity_selection = st.segmented_control(
                 "Type of emotion",
-                sentiment_tags,
-                default="Negative emotion")
+                sentiment_tags)
 
     #left column, sentiment subjectivity selection
     with col2:
         subjectivity_selection = st.segmented_control(
                 "Subjectivity of text",
-                subjectivity_tags,
-                default="Neutral Objectivity")
+                subjectivity_tags)
 
-
-    filtered_poems_s = clean_df_v2 #display unfiltered dataframe
+    #no filtering masks done by creating new series with all values = true, same indices as clean_df_v2
+    polarity_filter = pandas.Series(True, index=clean_df_v2.index)
+    subjectivity_filter = pandas.Series(True, index=clean_df_v2.index)
 
     #filtering by polarity
     if polarity_selection == "Negative emotion":
@@ -101,34 +101,19 @@ if page == "Data Exploration":
         polarity_filter = clean_df_v2["sentiment_polarity"] > 0
     elif polarity_selection == "Neutral emotion":
         polarity_filter = clean_df_v2["sentiment_polarity"] == 0 
-    if not polarity_selection:
-        polarity_filter = False
 
-        
-    #filter poems, only show poems with selected polarity
+    #filtering by subjectivity
     if subjectivity_selection == "Objective":
-        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] < 0
+        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] <= 0.5
     elif subjectivity_selection == "Subjective":
-        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] > 0
-    elif subjectivity_selection == "Neutral Objectivity":
-        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] == 0
-    if not subjectivity_selection:
-        subjectivity_filter = False
+        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] > 0.5
 
-    #combining & applying filter
-
-### !!!!!!!!!!!!!!!! BUG IS HERE !!!!!!!!!!!!!!!!! ### 
-    if polarity_filter is False:
-        combined_filter = subjectivity_filter
-    else:
-        combined_filter = polarity_filter & subjectivity_filter
-
+    #combining and applying filters
+    combined_filter = polarity_filter & subjectivity_filter
     filtered_poems_s = clean_df_v2[combined_filter]
 
-### !!!!!!!!!!!!!!!! BUG IS HERE !!!!!!!!!!!!!!!!! ### 
-
     #display poems
-    st.write(f"Poems with: **{polarity_selection}** and **{subjectivity_selection}**")
+    st.write(f"Poems with following filters applied: **{polarity_selection}** and **{subjectivity_selection}**")
     "There are ", len(filtered_poems_s), " poems to display."
     st.write(filtered_poems_s[["poem", "sentiment_polarity", "sentiment_subjectivity"]])
     
