@@ -6,7 +6,7 @@ nlp = spacy.load("en_core_web_sm")
 #function to get word frequency for all text
 #stopword parameters, bool to decide whether stop words are wanted or not
 #default is false
-def words_frequency(poem, keep_stopwords = False):
+def word_frequency(poem, keep_stopwords = False):
     doc = nlp(poem)
 
     if(keep_stopwords):

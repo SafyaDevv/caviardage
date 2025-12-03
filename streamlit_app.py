@@ -1,9 +1,10 @@
 import streamlit as st
-from data_pipeline import blackout_df, clean_df, clean_df_v2, plot_cleaning_pie_chart
-
+import data_pipeline as dp
 import matplotlib.pyplot as plot
 import pandas
 import numpy
+
+clean_df_v2 = dp.clean_df_v2
 
 st.title("Caviardage 📜🐙")
 
@@ -23,8 +24,56 @@ if page == "Overview":
         "Woop woop here comes the data.",
     )
 
-    fig = plot.figure(plot_cleaning_pie_chart())
+    fig = plot.figure(dp.plot_cleaning_pie_chart())
     st.pyplot(fig)
+
+    #WORDCLOUDS and word frequencies
+    st.subheader("Word frequencies for passages (input) vs poems (output):", divider="rainbow")
+    st.write("_Note: Without stopwords_")
+    
+    col1, col2 = st.columns(2)
+
+    st.write("Frequency of most common words in both 'passage' and 'poem'")
+
+    show_tables = st.toggle("_Show frequency tables._")
+
+#!!!!!!! BUG WHERE MORE WORDS ARE DISPLAYED THAN ASKED FOR!!!!!!!!!!!!!!!
+    how_many = 3 #default
+    options = ["3", "5", "10", "20"]
+    input = st.pills("How many top words in common to display", options)
+    if(input is not None):
+        how_many = int(input)                    
+
+    with col1:
+    #wordcloud
+        st.write("**_Poems_**")
+        wc_fig_1 = dp.generate_wordcloud("poems", "BuPu")
+        st.pyplot(wc_fig_1)
+        #tables of frequencies
+        most_common_df_1 = pandas.DataFrame(
+            dp.get_most_common_words("poems",how_many),
+            columns = ["word", "frequency"])
+
+        if show_tables:
+            st.dataframe(most_common_df_1, use_container_width=True, hide_index= True)
+
+    with col2:
+    #wordcloud
+        st.write("**_Passages_**")
+        wc_fig_2 = dp.generate_wordcloud("passages", "RdPu")
+        st.pyplot(wc_fig_2)
+
+    #tables of frequencies
+        most_common_df_2 = pandas.DataFrame(
+            dp.get_most_common_words("passages",how_many),
+            columns = ["word", "frequency"])
+
+        if show_tables:
+            st.dataframe(most_common_df_2, use_container_width=True, hide_index= True)
+    
+    #stacked bar chart
+    st.bar_chart(dp.overall_word_freq(how_many), x="word", y="frequency", color="source", horizontal=True)
+
 
 ### DATA EXPLORATION PAGE
 if page == "Data Exploration":
@@ -125,10 +174,10 @@ if page == "See all versions of dataset":
     expand.dataframe(clean_df_v2, use_container_width=True)    
  
     expand = st.expander("The cleaned dataset", icon=":material/info:")
-    expand.dataframe(clean_df, use_container_width=True)
+    expand.dataframe(dp.clean_df, use_container_width=True)
 
     expand = st.expander("The original Blackout dataset", icon=":material/info:")
-    expand.dataframe(blackout_df, use_container_width=True)
+    expand.dataframe(dp.blackout_df, use_container_width=True)
 
 
 
