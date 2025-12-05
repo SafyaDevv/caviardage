@@ -2,7 +2,6 @@ import streamlit as st
 import data_pipeline as dp
 import matplotlib.pyplot as plot
 import pandas
-import numpy
 
 clean_df_v2 = dp.clean_df_v2
 
@@ -11,7 +10,7 @@ st.title("Caviardage 📜🐙")
 ### SETTING UP SIDEBAR
 page = st.sidebar.selectbox(
     "Select a page:",
-    ["Overview", "Data Exploration", "See all versions of dataset"],
+    ["Overview", "Visualisation", "Data Exploration", "See all versions of dataset"],
     )
 st.sidebar.write("More stuff here?!")
 
@@ -35,7 +34,50 @@ if page == "Overview":
         st.write(clean_df_v2.columns.values)
 
 
+### VISUALISATION HERE
+if page == "Visualisation":
 
+    st.subheader("Correlation heatmap of numeric features in dataset, before encoding categorical features")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        fig = dp.get_correlation_heatmap()
+        st.pyplot(fig, use_container_width=False)
+
+    st.subheader("Scatter plots of sentiment analysis in dataset")
+    
+    col1, col2 = st.columns(2)
+
+    with col1:
+        #polarity vs subjectivity scatter plots
+        scatter_plot_1 = dp.get_scatterplot("passage-subjectivity", "passage-polarity", "Passage: Polarity compared to subjectivity", "pink")
+        st.pyplot(scatter_plot_1)
+
+    with col2:
+        scatter_plot_2 = dp.get_scatterplot("poem-subjectivity", "poem-polarity", "Poem: Polarity compared to subjectivity", "purple")
+        st.pyplot(scatter_plot_2)
+
+    st.subheader("Relationship between sentiment of a **poem** compared to the **passage** it is derived from")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        #sentiment of passage vs poem scatter plot
+        scatter_plot_3 = dp.get_scatterplot("poem-polarity", "passage-polarity", "Polarity: Poem compared to Passage", "cyan")
+        st.pyplot(scatter_plot_3)
+
+    with col2:
+        scatter_plot4 = dp.get_scatterplot("poem-subjectivity", "passage-subjectivity", "Subjectivity: Poem compared to Passage", "blue")
+        st.pyplot(scatter_plot4)
+
+    #scatter plot poem word count vs perplexity scores
+    st.subheader("Weak negative correlation between poems word count and their perplexity scores")
+    fig = dp.get_scatterplot("ppl-gpt2", "poem-word-count", "Poem word count compared to perplexity scores", "grey")
+    st.pyplot(fig)
+
+
+
+    #data cleaning pie chart
+    st.subheader("Pie chart of data that was cleaned from original dataset")
     fig = plot.figure(dp.plot_cleaning_pie_chart())
     st.pyplot(fig)
 
@@ -157,17 +199,16 @@ if page == "Data Exploration":
 
     #filtering by polarity
     if polarity_selection == "Negative emotion":
-        polarity_filter = clean_df_v2["sentiment_polarity"] < 0
+        polarity_filter = clean_df_v2["poem-polarity"] < 0
     elif polarity_selection == "Positive emotion":
-        polarity_filter = clean_df_v2["sentiment_polarity"] > 0
+        polarity_filter = clean_df_v2["poem-polarity"] > 0
     elif polarity_selection == "Neutral emotion":
-        polarity_filter = clean_df_v2["sentiment_polarity"] == 0 
-
+        polarity_filter = clean_df_v2["poem-polarity"] == 0 
     #filtering by subjectivity
     if subjectivity_selection == "Objective":
-        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] <= 0.5
+        subjectivity_filter = clean_df_v2["poem-subjectivity"] <= 0.5
     elif subjectivity_selection == "Subjective":
-        subjectivity_filter = clean_df_v2["sentiment_subjectivity"] > 0.5
+        subjectivity_filter = clean_df_v2["poem-subjectivity"] > 0.5
 
     #combining and applying filters
     combined_filter = polarity_filter & subjectivity_filter
@@ -176,7 +217,7 @@ if page == "Data Exploration":
     #display poems
     st.write(f"Poems with following filters applied: **{polarity_selection}** and **{subjectivity_selection}**")
     "There are ", len(filtered_poems_s), " poems to display."
-    st.write(filtered_poems_s[["poem", "sentiment_polarity", "sentiment_subjectivity"]])
+    st.write(filtered_poems_s[["poem", "poem-polarity", "poem-subjectivity"]])
     
 
 ### VERSION HISTORY PAGE

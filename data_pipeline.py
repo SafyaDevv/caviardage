@@ -3,12 +3,13 @@
 ### used in streamlit_app.py for displaying data and visualisations
 
 import pandas
-import numpy
+from pandas.api.types import is_numeric_dtype
 import seaborn as sea
 import matplotlib.pyplot as plot
 import numpy
 import wordcloud as wc
 from collections import Counter
+from scipy.stats import normaltest
 
 ### DATA INGESTION ###
 
@@ -40,6 +41,12 @@ clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
 
 #updated dataset n/ new features applied to each poem, done in generate_dataset.py
 clean_df_v2 = pandas.read_csv("files/better_blackout.csv") 
+
+clean_df_v2.rename(columns={"passage_sentiment_polarity": "passage-polarity",
+                                 "passage_subjectivity": "passage-subjectivity",
+                                 "sentiment_polarity": "poem-polarity",
+                                 "sentiment_subjectivity": "poem-subjectivity"},
+                    inplace=True)
 
 count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed during NLP in pos_handler.pos
 
@@ -98,6 +105,9 @@ unique_pos = clean_df_v2["part-of-speech"].unique()
 #print("List of unique POS tag sequences:\n ")
 #print(*unique_pos, sep='\n')
 
+#correlation matrix of numeric features before encoding categorical features
+corr = clean_df_v2.corr(numeric_only=True)
+
 
 ### VISUALISATION ###
 #used in streamlit_app.py and report
@@ -141,7 +151,11 @@ def plot_cleaning_pie_chart():
 # def plot_sentiment_count():
 # sea.countplot(x='')
 
-
+def get_correlation_heatmap():
+    fig = plot.figure(figsize=(6,6))
+    sea.heatmap(corr, cmap="coolwarm", annot=True)
+    plot.title("Correlation heatmap of numeric features")
+    return fig
 
 #function to generate wordcloud based on frequencies csv files
 def generate_wordcloud(text, colormap):
@@ -153,13 +167,37 @@ def generate_wordcloud(text, colormap):
     ax.axis("off")
     return fig
 
-#!!!!!!!!!! SHOULD I CLEAN OUTLIERS??! OR SOMETHING LIKE THAT?!
-def plot_correlation_sentiment():
-    sea.scatterplot(data = clean_df_v2, x='sentiment_polarity', 
-                    y ='sentiment_subjectivity')
-    plot.title("Polarity of poems vs Subjectivity")
-    plot.show()
+#function returning scatter plots used in streamlit_app.py
+def get_scatterplot(x, y, title, color):
+    fig, ax = plot.subplots(figsize=(10, 5))
+    sea.scatterplot(data = clean_df_v2, x=x, 
+                    y=y, ax = ax, color=color)
+    ax.set_title(title)
+    return fig
 
-    sea.heatmap(clean_df_v2)
-    plot.show()
 
+#functions to check distribution of numeric columns
+def check_uniformity_hist(col, bins=20):
+    fig, ax = plot.subplots()
+    sea.histplot(col, bins=bins, ax=ax)
+    ax.set_title(f"Histogram of {col.name}")
+    fig.show()
+
+def check_uniformity_kde(col):
+    fig, ax = plot.subplots()
+    sea.kdeplot(col, ax=ax, fill=True)
+    ax.set_title(f"KDE plot of {col.name}")
+    fig.show()
+
+# histograms = []
+# for column in clean_df_v2:
+#     if is_numeric_dtype(clean_df_v2[column]):
+#         histograms.append(check_uniformity_hist(clean_df_v2[column],20))
+
+# plot.show()
+
+# kde_plots = []
+# for column in clean_df_v2:
+#     if is_numeric_dtype(clean_df_v2[column]):
+#         kde_plots.append(check_uniformity_kde(clean_df_v2[column]))   
+# plot.show()
