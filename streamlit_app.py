@@ -24,6 +24,18 @@ if page == "Overview":
         "Woop woop here comes the data.",
     )
 
+    #Descriptive analysis of dataset
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write(clean_df_v2.describe())  # ? add description for each column
+
+    with col2:
+        st.write(clean_df_v2.columns.values)
+
+
+
     fig = plot.figure(dp.plot_cleaning_pie_chart())
     st.pyplot(fig)
 
