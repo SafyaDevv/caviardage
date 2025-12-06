@@ -152,7 +152,7 @@ if page == "Data Exploration":
         )
     
     #filter poems, only show poems with selected pos tags
-    filter = clean_df_v2["part-of-speech"].apply(
+    filter = clean_df_v2["poem-pos"].apply(
     lambda pos_list: all(pos in pos_list for pos in user_selection))
     filtered_poems = clean_df_v2[filter]
 
@@ -169,7 +169,7 @@ if page == "Data Exploration":
     #display poems
     st.write(f"Poems containing *(in any order)*: **{selection_label}**")
     "There are ", len(filtered_poems), " poems to display."
-    st.write(filtered_poems[["poem", "part-of-speech"]])
+    st.write(filtered_poems[["poem", "poem-pos"]])
 
     "✦•····················•✦•····················•✦"*4
 
