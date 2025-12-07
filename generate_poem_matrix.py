@@ -1,23 +1,20 @@
 import re
 import numpy
-import spacy
 import pandas
 from data_pipeline import clean_df_v2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import normalize
+from sentence_transformers import SentenceTransformer
 
-nlp = spacy.load("en_core_web_lg")
 
 ### EMBEDDING AND ENCODING FEATURES ###
 
-def get_vector(poem):
-    doc = nlp(poem)
-    vector = doc.vector
-    return vector
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
-#embedding poems into vectors and putting them in a numpy nd array
-poem_matrix = numpy.vstack(clean_df_v2["poem"].apply(get_vector)) #vstack allows to keep each poem vector as a row in the matrix
+#embedding poem into vectors using sentence_transformers, return an nd array
+poem_embeddings = model.encode(clean_df_v2["poem"].tolist(), convert_to_numpy=True) 
+poem_matrix = poem_embeddings
 
 #encoding sequence of pos tags using TfidfVectorizer and adding them to matrix that will be use for cosine similarity
 pos_strings = clean_df_v2["poem-pos"].apply(
@@ -44,4 +41,4 @@ poem_matrix = normalize(poem_matrix, axis=1) #normalising each row
 
 poem_matrix_df = pandas.DataFrame(poem_matrix, index=clean_df_v2.index) #turning into dataframe to store as csv, using original dataframe index to be able to link back to poems later
 
-poem_matrix_df.to_csv("files/poem_matrix.csv", index=False)
+poem_matrix_df.to_csv("files/poem_matrix.csv", index=True)
