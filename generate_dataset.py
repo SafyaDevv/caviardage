@@ -44,6 +44,5 @@ df.insert(df.columns.get_loc("passage_sentiment_polarity") + 1, "passage_subject
 df["passage-word-count"] = df["passage"].apply(lambda passage: len(passage.split()))
 df["poem-word-count"] = df["poem"].apply(lambda poem: len(poem.split()))
 
-
 #csv generation
 df.to_csv("files/better_blackout.csv", index=False)

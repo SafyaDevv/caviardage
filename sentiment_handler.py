@@ -18,11 +18,3 @@ def get_polarity(poem):
 def get_subjectivity(poem):
         doc = nlp(poem)
         return doc._.blob.sentiment.subjectivity
-
-# print(sentiment)
-# if sentiment.polarity == 0:
-#     print("Sentence is neutral")
-# elif sentiment.polarity < 0:
-#         print("Sentiment is negative")
-# else:
-#         print("Sentiment is positive")
