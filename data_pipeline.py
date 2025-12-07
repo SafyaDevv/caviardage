@@ -36,17 +36,12 @@ count_of_duplicate = count_of_poems - len(clean_df)
 
 clean_df["poem"] = clean_df["poem"].str.strip() #remove trailing/leading spaces
 
+clean_df.drop(columns=["grammar-check"], inplace=True) #Dropping grammar-check column as all values are false after cleaning of non-alphabetical symbols
+
 ### DATA PREPROCESSING ###
 
 #updated dataset n/ new features applied to each poem, done in generate_dataset.py
-clean_df_v2 = pandas.read_csv("files/better_blackout.csv") 
-
-clean_df_v2.rename(columns={"passage_sentiment_polarity": "passage-polarity",
-                                 "passage_subjectivity": "passage-subjectivity",
-                                 "sentiment_polarity": "poem-polarity",
-                                 "sentiment_subjectivity": "poem-subjectivity",
-                                 "part-of-speech": "poem-pos"},
-                    inplace=True)
+clean_df_v2 = pandas.read_csv("files/caviardage_dataset.csv") 
 
 count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed during NLP in pos_handler.pos
 
@@ -100,13 +95,6 @@ def overall_word_freq(how_many: int):
     overall_word_freq = pandas.concat(frames)
 
     return overall_word_freq
-
-# !!! NOT IN USE RIGHT NOW
-#find all unique POS tag sequences in cleaned dataset
-unique_pos = clean_df_v2["poem-pos"].unique()
-#print(f"Number of unique part of speech sequences in dataset: {len(unique_pos)}")
-#print("List of unique POS tag sequences:\n ")
-#print(*unique_pos, sep='\n')
 
 #correlation matrix of numeric features before encoding categorical features
 corr = clean_df_v2.corr(numeric_only=True)
