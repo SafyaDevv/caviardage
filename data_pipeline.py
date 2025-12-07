@@ -5,15 +5,10 @@
 import pandas
 from pandas.api.types import is_numeric_dtype
 import seaborn as sea
-import numpy
 import matplotlib.pyplot as plot
 import wordcloud as wc
 from collections import Counter
 from scipy.stats import normaltest
-from sklearn.preprocessing import StandardScaler
-
-import pos_handler
-
 
 ### DATA INGESTION ###
 
@@ -59,30 +54,9 @@ count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed du
 word_freq_poems = pandas.read_csv("files/poems_word_frequency.csv")
 word_freq_passages = pandas.read_csv("files/passages_word_frequency.csv")
 
-# Creating version of dataset that will be used for clustering and analysis of poems
-normalised_df = clean_df_v2.copy()
-normalised_df.drop(columns=["passage","passage-polarity","passage-subjectivity", 
-                            "passage-part-of-speech", "passage-word-count","indices"], inplace=True)
-
-#scaling numeric features
-z_scaler = StandardScaler()
-
-#starting by logscaling perplexity scores as they follow power law distribution
-normalised_df["ppl-gpt2"] = numpy.log1p(normalised_df["ppl-gpt2"])
-
-#then z-scaling all numeric features
-normalised_df[["ppl-gpt2","poem-polarity",
-               "poem-subjectivity","poem-word-count"]] = z_scaler.fit_transform(
-                   normalised_df[["ppl-gpt2","poem-polarity",
-                                  "poem-subjectivity","poem-word-count"]])
-print(normalised_df.columns.values)
-
-#vectorising poems using spacy in pos_handler.py
-
-
 ### DATA PROCESSING ###
 
-
+## I WILL INSERT THE COSINE SIMILARITY CALCULATIONS HERE ##
 
 ### ANALYSIS ##
 
@@ -136,7 +110,6 @@ unique_pos = clean_df_v2["poem-pos"].unique()
 
 #correlation matrix of numeric features before encoding categorical features
 corr = clean_df_v2.corr(numeric_only=True)
-
 
 ### VISUALISATION ###
 #used in streamlit_app.py and report
@@ -217,32 +190,3 @@ def check_uniformity_kde(col):
     ax.set_title(f"KDE plot of {col.name}")
     fig.show()
 
-## Not in use currently
-# checking distributions of numeric features
-
-# histograms = []
-# for column in clean_df_v2:
-#     if is_numeric_dtype(clean_df_v2[column]):
-#         histograms.append(check_uniformity_hist(clean_df_v2[column],20))
-
-# plot.show()
-
-# kde_plots = []
-# for column in clean_df_v2:
-#     if is_numeric_dtype(clean_df_v2[column]):
-#         kde_plots.append(check_uniformity_kde(clean_df_v2[column]))   
-# plot.show()
-
-
-# histograms = []
-# for column in normalised_df:
-#     if is_numeric_dtype(normalised_df[column]):
-#         histograms.append(check_uniformity_hist(normalised_df[column],20))
-
-# plot.show()
-
-# kde_plots = []
-# for column in normalised_df:
-#     if is_numeric_dtype(normalised_df[column]):
-#         kde_plots.append(check_uniformity_kde(normalised_df[column]))   
-# plot.show()
