@@ -53,14 +53,14 @@ def clustering(visualisation=False):
 
     #create dictionary of cluster ids to names
     cluster_id_to_name = {
-        0: "Familial",
+        0: "Social Spheres",
         1: "Animalistic",
-        2: "Cosmic",
-        3: "Instrumental",
+        2: "Cosmic / Times",
+        3: "Doings / Things",
         4: "Existential",
-        5: "Maritime",
+        5: "Elemental",
         6: "Emotional",
-        7: "Appearance",
+        7: "Appearances",
         8: "Botanical",
         9: "Spiritual" }
 
@@ -91,20 +91,30 @@ def get_clustering_vis(poems, labels, poem_df_with_clusters):
 
 #creating df for visualisation
     visualisation_df = pandas.DataFrame({
-        'x': poems[:, 0],
-        'y': poems[:, 1],
-        'z': poems[:, 2],
+        'x': reduced_poems[:, 0],
+        'y': reduced_poems[:, 1],
+        'z': reduced_poems[:, 2],
         'poem': poem_df_with_clusters['poem'],
         'cluster_id': labels,
         'theme': poem_df_with_clusters['theme'],
         'index': poem_df_with_clusters.index
         })
 
-    fig = px.scatter_3d(
-        visualisation_df, x='x', y='y', z='z', color='cluster_id', 
-        hover_data=['index', 'poem', 'theme'])
-    fig.update_layout(
-        title="3D Visualisation of poem clusters")
+    fig = px.scatter_3d(visualisation_df, x='x', y='y', z='z', color='theme', 
+        custom_data=['index', 'poem', 'theme'], opacity=0.7)
+    
+    fig.update_layout(title="3D Visualisation of poem themes (clusters)",
+        legend_title="Poem Themes",
+        hoverlabel=dict(bgcolor="white", font_size=12, font_family="Century Gothic"),
+        legend=dict(
+        font=dict(size=18),
+        title_font=dict(size=20),
+        itemsizing='constant'))
+    
+    fig.update_traces(hovertemplate=(
+            "Index: %{customdata[0]}<br>"
+            "Poem: <b>%{customdata[1]}</b><br>"
+            "Theme: %{customdata[2]}<br><extra></extra>"))
         
     return fig
 
@@ -115,15 +125,6 @@ poem_clusters_df, vis_fig = clustering(visualisation=True)
 print(poem_clusters_df.head())
 print(poem_clusters_df.columns.values)
 vis_fig.show()
-
-
-
-
-
-
-
-
-
 
 
 ### LABELLING CLUSTERS ###
