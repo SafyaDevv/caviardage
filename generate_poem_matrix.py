@@ -20,6 +20,9 @@ poem_matrix = poem_embeddings
 def get_poem_embeddings():
     return z_scaler.fit_transform(poem_embeddings)
 
+def get_normalised_poem_embeddings():
+    return normalize(poem_embeddings, axis=1)
+
 #encoding sequence of pos tags using TfidfVectorizer and adding them to matrix that will be use for cosine similarity
 pos_strings = clean_df_v2["poem-pos"].apply(
     lambda pos_string: 
