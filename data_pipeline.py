@@ -51,11 +51,7 @@ count_unknown_words = len(clean_df) - len(clean_df_v2) #count of rows removed du
 word_freq_poems = pandas.read_csv("files/poems_word_frequency.csv")
 word_freq_passages = pandas.read_csv("files/passages_word_frequency.csv")
 
-### DATA PROCESSING ###
-
-## I WILL INSERT THE COSINE SIMILARITY CALCULATIONS HERE ##
-
-### ANALYSIS ##
+### DATA PROCESSING  & ANALYSIS ###
 
 #helper function used to turn dataframe into dict that can be handled by Counter
 #and WorldCloud
@@ -100,6 +96,10 @@ def overall_word_freq(how_many: int):
 
 #correlation matrix of numeric features before encoding categorical features
 corr = clean_df_v2.corr(numeric_only=True)
+
+
+#cosine similarity between poems
+
 
 ### VISUALISATION ###
 #used in streamlit_app.py and report

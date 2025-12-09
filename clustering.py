@@ -14,15 +14,15 @@ from sklearn.metrics import silhouette_score
 from sklearn.cluster import KMeans
 from sklearn import metrics
 from scipy.spatial.distance import cdist
-from generate_poem_matrix import get_poem_embeddings
 from data_pipeline import clean_df_v2
-
 from sklearn.feature_extraction.text import TfidfVectorizer
+from generate_poem_matrix import get_normalised_poem_embeddings
+
 
 # Function to run kmeans clustering on poem embeddings
 # called in get_poem_clusters()
 def run_kmeans(n_clusters):
-    poems = get_poem_embeddings() #get scaled poem embeddings
+    poems = get_normalised_poem_embeddings()
 
     # reducing dimensionality using PCA first then UMAP
     pca = PCA(n_components=50, random_state=42)
@@ -38,7 +38,7 @@ def run_kmeans(n_clusters):
     
     # Calculate Silhoutte Score
     score = silhouette_score(reduced_poems, labels, metric='cosine')
-    # print(f"Silhouette Score for {n_clusters} clusters: {score:.3f}")
+    print(f"Silhouette Score for {n_clusters} clusters: {score:.3f}")
 
     return reduced_poems, labels, n_clusters
 
@@ -91,6 +91,11 @@ def clustering(visualisation=False):
 # and label names
 def get_clustering_vis(poems, labels, poem_df_with_clusters):
 #creating df for visualisation
+
+#further reducing dimensions to 3D for visualisation
+    reducer_3d = umap.UMAP(n_neighbors=15, n_components=3, metric='cosine', random_state=42, low_memory=False)
+    poems = reducer_3d.fit_transform(poems)
+
     visualisation_df = pandas.DataFrame({
         'x': poems[:, 0],
         'y': poems[:, 1],
@@ -122,49 +127,53 @@ def get_clustering_vis(poems, labels, poem_df_with_clusters):
 ## NOTE: The following code was used during development
 # and is kept here in case it's needed to improve clustering later ##
 
-## TESTING ZONE ##
+# TESTING ZONE ##
 
-# clustering(visualisation=True)
-# poem_clusters_df, vis_fig = clustering(visualisation=True)
-# print(poem_clusters_df.head())
-# print(poem_clusters_df.columns.values)
-# vis_fig.show()
+clustering(visualisation=True)
+poem_clusters_df, vis_fig = clustering(visualisation=True)
+print(poem_clusters_df.head())
+print(poem_clusters_df.columns.values)
+vis_fig.show()
 
-### LABELLING CLUSTERS ###
+## LABELLING CLUSTERS ###
 
-# # giving each cluster a label based on common themes in poems
-# def get_top_terms(cluster_id): 
-#     poem_texts = clean_df_v2['poem'].tolist()
-#     indices = np.where(labels == cluster_id)[0] #get indices of poems in that cluster
-#     cluster_poems = [poem_texts[i] for i in indices] #create list of poems in that cluster
-#     #find top terms using TFIDF
-#     vectorizer = TfidfVectorizer(ngram_range=(1, 3), stop_words='english')
-#     tfidf_matrix = vectorizer.fit_transform(cluster_poems)
-#     feature_names = np.array(vectorizer.get_feature_names_out())
-#     mean_tfidf = tfidf_matrix.mean(axis=0).A1 #average tfidf score for each term in cluster 
-#                                              # (how important is that term in that cluster), 
-#                                              # then flatten it
-#     top_indices = mean_tfidf.argsort()[::-1][:10] #slice through array of indices 
-#                                             #sorted by descending tfidf score to get top 10 terms
-#     top_terms = feature_names[top_indices]
+# giving each cluster a label based on common themes in poems
+def get_top_terms(cluster_id, n_terms=10): 
+    poem_texts = clean_df_v2['poem'].tolist()
+
+    vectorizer = TfidfVectorizer(ngram_range=(1, 3), stop_words='english')
+    tfidf_matrix = vectorizer.fit_transform(poem_texts)
+    feature_names = np.array(vectorizer.get_feature_names_out())
+
+    #get indices of poems in that cluster
+    indices = np.where(labels == cluster_id)[0] 
+
+    #find top terms using TFIDF
+    cluster_poems = tfidf_matrix[indices] 
+
+    mean_tfidf = cluster_poems.mean(axis=0).A1 #average tfidf score for each term in cluster 
+                                             # (how important is that term in that cluster), 
+                                             # then flatten it
+    top_indices = mean_tfidf.argsort()[::-1][:n_terms] #slice through array of indices 
+                                            #sorted by descending tfidf score to get top 10 terms
+    top_terms = feature_names[top_indices]
     
-    
-#     return top_terms
+    return top_terms
 
-# def print_top_terms():
-#     #iterate through each cluster and print top terms for each cluster
-#     for cluster_id in range(n_clusters):
-#         print(f"\n[Cluster {cluster_id}] Top terms:")
-#         top_terms = get_top_terms(cluster_id)
-#         print(", ".join(top_terms))
+def print_top_terms():
+    #iterate through each cluster and print top terms for each cluster
+    for cluster_id in range(n_clusters):
+        print(f"\n[Cluster {cluster_id}] Top terms:")
+        top_terms = get_top_terms(cluster_id)
+        print(", ".join(top_terms))
 
-# print_top_terms()
+print_top_terms()
       
 # function to show example poems from each cluster
-# def show_examples(cluster_id, n=5):
-#     index = np.where(labels == cluster_id)[0][:n]
-#     for i in index:
-#         print(f"\n[poem {i}] (cluster {cluster_id})")
-#         print(clean_df_v2.loc[i, "poem"])
+def show_examples(cluster_id, n=5):
+    index = np.where(labels == cluster_id)[0][:n]
+    for i in index:
+        print(f"\n[poem {i}] (cluster {cluster_id})")
+        print(clean_df_v2.loc[i, "poem"])
 
-# show_examples(cluster_id=7, n=10)
+show_examples(cluster_id=7, n=10)
