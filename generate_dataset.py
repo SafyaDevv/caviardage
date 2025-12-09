@@ -8,6 +8,8 @@ to avoid re-computing everything each time those scripts are run.
 
 from data_pipeline import clean_df
 import nlp_handler as nlp
+import clustering as themes
+import plotly.io as pio
 
 ## SETUP ##
 
@@ -45,6 +47,14 @@ df["poem-word-count"] = word_count
 word_count_passage = doc_pass.apply(lambda passage: len(passage))
 passage_wc = word_count_passage
 df.insert(df.columns.get_loc("passage-subjectivity") + 1, "passage-word-count", passage_wc) #putting it after passage-subjectivity
+
+## POEM LABELS ##
+poem_clusters_df, vis_fig = themes.clustering(visualisation=True) #getting poem clusters with clusters ids and labels
+df["poem-cluster-id"] = poem_clusters_df["cluster_id"]
+df["poem-theme"] = poem_clusters_df["theme"]
+
+## EXPORTING VISUALISATION AS JSON##
+pio.write_json(vis_fig, "files/poem_clusters.json")
 
 #csv generation
 df.to_csv("files/caviardage_dataset.csv", index=False)

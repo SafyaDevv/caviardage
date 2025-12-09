@@ -18,6 +18,7 @@ poem_matrix = poem_embeddings
 
 #returns scaled poem embeddings for use in clustering.py
 def get_poem_embeddings():
+    z_scaler = StandardScaler()
     return z_scaler.fit_transform(poem_embeddings)
 
 def get_normalised_poem_embeddings():

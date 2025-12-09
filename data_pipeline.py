@@ -104,6 +104,8 @@ corr = clean_df_v2.corr(numeric_only=True)
 ### VISUALISATION ###
 #used in streamlit_app.py and report
 
+
+
 '''Function returning a pie chart showing an overview of the data cleaning process
 used in streamlit_app.py'''
 def plot_cleaning_pie_chart():

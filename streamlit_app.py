@@ -2,6 +2,7 @@ import streamlit as st
 import data_pipeline as dp
 import matplotlib.pyplot as plot
 import pandas
+import plotly.io as pio
 
 clean_df_v2 = dp.clean_df_v2
 
@@ -10,7 +11,11 @@ st.title("Caviardage 📜🐙")
 ### SETTING UP SIDEBAR
 page = st.sidebar.selectbox(
     "Select a page:",
-    ["Overview", "Visualisation", "Data Exploration", "See all versions of dataset"],
+    ["Overview", "Visualisation", "Syntax & Sentiment Analysis", 
+     "Themes exploration",
+     "Poem recommender",
+     "See all versions of dataset",
+     ]
     )
 st.sidebar.write("More stuff here?!")
 
@@ -74,8 +79,6 @@ if page == "Visualisation":
     fig = dp.get_scatterplot("ppl-gpt2", "poem-word-count", "Poem word count compared to perplexity scores", "grey")
     st.pyplot(fig)
 
-
-
     #data cleaning pie chart
     st.subheader("Pie chart of data that was cleaned from original dataset")
     fig = plot.figure(dp.plot_cleaning_pie_chart())
@@ -130,7 +133,7 @@ if page == "Visualisation":
 
 
 ### DATA EXPLORATION PAGE
-if page == "Data Exploration":
+if page == "Syntax & Sentiment Analysis":
 
     st.write(
         "Explore the dataset ✨",
@@ -219,6 +222,54 @@ if page == "Data Exploration":
     "There are ", len(filtered_poems_s), " poems to display."
     st.write(filtered_poems_s[["poem", "poem-polarity", "poem-subjectivity"]])
     
+if page == "Themes exploration":
+
+    st.subheader(
+        "Explore poem themes through clustering analysis")
+    
+    themes_fig = pio.read_json("files/poem_clusters.json")
+    st.plotly_chart(themes_fig)
+
+    
+    "🔎 Find poems with specific a specific theme"
+
+    #choose theme to use
+    themes = clean_df_v2["poem-theme"].unique().tolist()
+
+    user_selection = st.selectbox(
+            "Select a theme:",
+            themes,
+            placeholder="Choose a theme to filter poems"
+        )
+    
+
+    #filter poems, only show poems with selected theme
+    filtered_poems = clean_df_v2[clean_df_v2["poem-theme"] == user_selection]
+        
+    #display poems
+    st.write(f"Poems with following theme: **{user_selection}**")
+    "There are ", len(filtered_poems), " poems to display."
+    st.write(filtered_poems[["poem", "poem-theme"]])
+
+   #get random poem from selected theme
+    if st.button("Get a random poem from this theme"):
+        random_poem = filtered_poems.sample(n=1)
+        st.write(random_poem[["poem", "poem-theme", "poem-polarity", "poem-subjectivity"]])        
+        #describe its sentiment
+        if random_poem["poem-polarity"].values[0] < 0:
+            polarity_desc = "negative emotion"
+        elif random_poem["poem-polarity"].values[0] > 0:
+            polarity_desc = "positive emotion"
+        else:
+            polarity_desc = "neutral emotion"
+        if random_poem["poem-subjectivity"].values[0] <= 0.5:
+            subjectivity_desc = "objective"
+        else:
+            subjectivity_desc = "subjective"
+        st.write(f"This poem expresses **{polarity_desc}** and its tone is **{subjectivity_desc}**.")
+
+if page == "Poem recommender":
+    st.subheader("Select 5 poems you like, and get recommendations for similar poems!")
 
 ### VERSION HISTORY PAGE
 if page == "See all versions of dataset":
