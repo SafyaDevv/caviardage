@@ -230,7 +230,8 @@ if page == "Themes exploration":
     themes_fig = pio.read_json("files/poem_clusters.json")
     st.plotly_chart(themes_fig)
 
-    
+    st.write("_Please activate your browswer's light mode for better visibility of the hover labels._\n")
+
     "🔎 Find poems with specific a specific theme"
 
     #choose theme to use

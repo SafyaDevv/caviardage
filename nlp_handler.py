@@ -7,6 +7,8 @@ import spacy
 from spacytextblob.spacytextblob import SpacyTextBlob
 from collections import Counter
 
+from textblob import TextBlob
+
 nlp = spacy.load("en_core_web_lg")
 nlp.add_pipe('spacytextblob') #will be used for sentiment analysis
 
@@ -61,4 +63,3 @@ def get_polarity(poem):
 def get_subjectivity(poem):
         doc = nlp(poem)
         return doc._.blob.sentiment.subjectivity
-

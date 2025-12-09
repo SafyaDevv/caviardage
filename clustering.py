@@ -18,7 +18,6 @@ from data_pipeline import clean_df_v2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from generate_poem_matrix import get_normalised_poem_embeddings
 
-
 # Function to run kmeans clustering on poem embeddings
 # called in get_poem_clusters()
 def run_kmeans(n_clusters):
@@ -42,7 +41,7 @@ def run_kmeans(n_clusters):
 
     return reduced_poems, labels, n_clusters
 
-poems, labels, n_clusters = run_kmeans(n_clusters=10)
+poems, labels, n_clusters = run_kmeans(n_clusters=12)
 
 ## START HERE 
 # FUNCTION THAT RETURNS POEM INDICES WITH CLUSTER IDS AND LABELS ##
@@ -50,7 +49,7 @@ poems, labels, n_clusters = run_kmeans(n_clusters=10)
 # returns either visualisation figure and poem clusters df,
 # or just poem clusters df depending on parameter
 def clustering(visualisation=False):
-    poems, labels, n_clusters = run_kmeans(n_clusters=10)
+    poems, labels, n_clusters = run_kmeans(n_clusters=12)
 
     poem_with_clusters = clean_df_v2["poem"].to_frame()
     poem_with_clusters['cluster_id'] = labels
@@ -59,16 +58,18 @@ def clustering(visualisation=False):
 
     #create dictionary of cluster ids to names
     cluster_id_to_name = {
-        0: "Social Spheres",
-        1: "Animalistic",
-        2: "Cosmic / Times",
-        3: "Doings / Things",
-        4: "Existential",
-        5: "Elemental",
-        6: "Emotional",
-        7: "Appearances",
-        8: "Botanical",
-        9: "Spiritual" }
+        0: "History, thoughts, people and events",
+        1: "Time and Seasons, ",
+        2: "Water and its bodies",
+        3: "Family, friends and people",
+        4: "Feelings, love and pain",
+        5: "Poetry itself",
+        6: "Flowers and those who like them",
+        7: "Looking and kissing",
+        8: "Anatomy and Things",
+        9: "Night and Day, Darkness and Light",
+        10: "Forest and animals",
+        11: "Spiritual"}
 
     #naming clusters
     for i in range(len(labels_names)):
@@ -129,16 +130,14 @@ def get_clustering_vis(poems, labels, poem_df_with_clusters):
 
 # TESTING ZONE ##
 
-clustering(visualisation=True)
 poem_clusters_df, vis_fig = clustering(visualisation=True)
-print(poem_clusters_df.head())
-print(poem_clusters_df.columns.values)
 vis_fig.show()
 
-## LABELLING CLUSTERS ###
+labels = poem_clusters_df["cluster_id"].to_numpy()
 
+## LABELLING CLUSTERS ###
 # giving each cluster a label based on common themes in poems
-def get_top_terms(cluster_id, n_terms=10): 
+def get_top_terms(labels, cluster_id, n_terms=10): 
     poem_texts = clean_df_v2['poem'].tolist()
 
     vectorizer = TfidfVectorizer(ngram_range=(1, 3), stop_words='english')
@@ -160,20 +159,20 @@ def get_top_terms(cluster_id, n_terms=10):
     
     return top_terms
 
-def print_top_terms():
+def print_top_terms(labels, n_clusters):
     #iterate through each cluster and print top terms for each cluster
     for cluster_id in range(n_clusters):
         print(f"\n[Cluster {cluster_id}] Top terms:")
-        top_terms = get_top_terms(cluster_id)
+        top_terms = get_top_terms(labels, cluster_id)
         print(", ".join(top_terms))
 
-print_top_terms()
+print_top_terms(labels, n_clusters)
       
 # function to show example poems from each cluster
-def show_examples(cluster_id, n=5):
+def show_examples(labels, cluster_id, n=5):
     index = np.where(labels == cluster_id)[0][:n]
     for i in index:
         print(f"\n[poem {i}] (cluster {cluster_id})")
         print(clean_df_v2.loc[i, "poem"])
 
-show_examples(cluster_id=7, n=10)
+show_examples(labels, cluster_id=7, n=10)
