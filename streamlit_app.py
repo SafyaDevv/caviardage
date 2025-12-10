@@ -1,8 +1,11 @@
 import streamlit as st
-import data_pipeline as dp
 import matplotlib.pyplot as plot
 import pandas
 import plotly.io as pio
+import numpy
+
+import data_pipeline as dp
+
 
 clean_df_v2 = dp.clean_df_v2 #getting dataset
 
@@ -53,6 +56,8 @@ if page == "Overview":
 
     col1, col2 = st.columns(2)
     random_poem = clean_df_v2.sample(n=1)
+
+    random_poem_up = False
 
     with col1:
         if st.button("Get a random poem 🎲"):
@@ -304,7 +309,25 @@ if page == "Themes exploration":
         st.write(f"This poem expresses **{polarity_desc}** and its tone is **{subjectivity_desc}**.")
 
 if page == "Poem recommender":
-    st.subheader("Select 5 poems you like, and get recommendations for similar poems!")
+
+    poems_df = clean_df_v2[["poem", "poem-theme","poem-polarity", "poem-subjectivity"]].copy()
+
+    #function to select poems from a copy of the dataframe
+    def selected_poems():
+        selected_poems_df = poems_df.copy()
+        selected_poems_df.insert(0, "Choose", False)
+        edited_df = st.data_editor(selected_poems_df)
+        selected_indices = list(numpy.where(edited_df.Choose)[0])
+        selected_rows = poems_df[edited_df.Choose]
+        return selected_rows
+
+    st.subheader("· ♡ · Select poems you like · ♡ ·")
+    st.write("")
+
+    with st.container(border=True):
+        selection = selected_poems()
+        st.write("<p style='font-size:20px; font-weight:bold;'>Your selection:</p>", unsafe_allow_html=True)
+        st.write(selection)
 
     st.write("_In development..._")
 
