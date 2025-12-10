@@ -3,7 +3,6 @@ https://www.datacamp.com/tutorial/introduction-t-sne
 https://medium.com/@RobuRishabh/clustering-text-data-with-k-means-and-visualizing-with-t-sne-9bc1fe7d8fed
 https://codesignal.com/learn/courses/introduction-to-tf-idf-vectorization-in-python/lessons/navigating-the-weights-of-words-analyzing-tf-idf-scores-in-nlp
 '''
-
 import plotly.express as px
 import umap.umap_ as umap
 import numpy as np
@@ -14,9 +13,11 @@ from sklearn.metrics import silhouette_score
 from sklearn.cluster import KMeans
 from sklearn import metrics
 from scipy.spatial.distance import cdist
-from data_pipeline import clean_df_v2
 from sklearn.feature_extraction.text import TfidfVectorizer
-from generate_poem_matrix import get_normalised_poem_embeddings
+from encoding_features import get_normalised_poem_embeddings
+
+from data_pipeline import clean_df_v2
+
 
 # Function to run kmeans clustering on poem embeddings
 # called in get_poem_clusters()

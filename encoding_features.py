@@ -2,13 +2,13 @@ import re
 import numpy
 import pandas
 import scipy
-from data_pipeline import clean_df_v2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import normalize
 from sentence_transformers import SentenceTransformer
 from sklearn.preprocessing import OneHotEncoder
 
+from data_pipeline import clean_df_v2
 
 ### EMBEDDING AND ENCODING FEATURES ###
 

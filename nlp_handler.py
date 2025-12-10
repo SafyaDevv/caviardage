@@ -33,7 +33,7 @@ def has_unknown_pos(tags):
 #function to get word frequency for all text
 #stopword parameters, bool to decide whether stop words are wanted or not
 #default is false
-def word_frequency(doc, keep_stopwords = False):
+def get_word_frequency(doc, keep_stopwords = False):
 
     if(keep_stopwords):
         tokens = [token.text

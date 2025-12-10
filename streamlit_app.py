@@ -55,7 +55,7 @@ if page == "Overview":
     random_poem = clean_df_v2.sample(n=1)
 
     with col1:
-        if st.button("Get a random poem 🍀"):
+        if st.button("Get a random poem 🎲"):
             random_poem = clean_df_v2.sample(n=1)
             id_poem = "  (ID: " + str(random_poem['poem'].index.values[0]) + ")"
             text_poem = str(random_poem['poem'].values[0])
@@ -129,7 +129,7 @@ if page == "Passages (input) vs Poems (output)":
             st.dataframe(most_common_df_2, use_container_width=True, hide_index= True)
     
     #stacked bar chart
-    st.bar_chart(dp.overall_word_freq(how_many), x="word", y="frequency", color="source", horizontal=True)
+    st.bar_chart(dp.get_overall_word_freq(how_many), x="word", y="frequency", color="source", horizontal=True)
 
     st.subheader("Correlation heatmap of numeric features in dataset, before encoding categorical features")
     col1, col2 = st.columns(2)

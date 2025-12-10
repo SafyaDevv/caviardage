@@ -73,11 +73,12 @@ def get_frequency_dict(which_text):
 #first wrap dict into counter to be able to use most common words function
 def get_most_common_words(text, how_many: int):
     frequency_counter = Counter(get_frequency_dict(text))
-    return frequency_counter.most_common(how_many)
+    most_common_words = frequency_counter.most_common(how_many)
+    return most_common_words
 
 #new dataframe used in stacked bar charts with top words 
 # in both poems and passages
-def overall_word_freq(how_many: int):
+def get_overall_word_freq(how_many: int):
     df_poems = pandas.DataFrame(get_most_common_words("poems",how_many),
             columns = ["word", "frequency"])
     

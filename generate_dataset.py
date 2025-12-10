@@ -6,10 +6,11 @@ so it can be used by data_pipeline.py and streamlit_app.py
 to avoid re-computing everything each time those scripts are run.
 '''
 
-from data_pipeline import clean_df
-import nlp_handler as nlp
 import clustering as themes
 import plotly.io as pio
+
+import nlp_handler as nlp
+from data_pipeline import clean_df
 
 ## SETUP ##
 
@@ -38,7 +39,6 @@ passage_subjectivity = doc_pass.apply(nlp.get_subjectivity)
 
 df.insert(df.columns.get_loc("passage") + 2, "passage-polarity", passage_polarity) #putting it after passage-pos tags
 df.insert(df.columns.get_loc("passage-polarity") + 1, "passage-subjectivity", passage_subjectivity)
-
 
 ## WORD COUNT ##
 word_count = doc_poem.apply(lambda poem: len(poem)) #counting tokens in each poem
