@@ -1,10 +1,4 @@
-# 🎈 Blank app template
-
-A simple Streamlit app template for you to modify!
-
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
-
-### How to run it on your own machine
+### How to run Streamlit on your computer.
 
 1. Install the requirements
 
@@ -17,6 +11,7 @@ A simple Streamlit app template for you to modify!
    ```
    $ streamlit run streamlit_app.py
    ```
+--------------------------
 
-
-please note the comments are for myself LOL
+Please note that the comments in the scripts were written during development and for my own understanding. 
+They are meant to be edited before release.
