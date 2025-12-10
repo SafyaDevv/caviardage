@@ -317,7 +317,6 @@ if page == "Poem recommender":
         selected_poems_df = poems_df.copy()
         selected_poems_df.insert(0, "Choose", False)
         edited_df = st.data_editor(selected_poems_df)
-        selected_indices = list(numpy.where(edited_df.Choose)[0])
         selected_rows = poems_df[edited_df.Choose]
         return selected_rows
 

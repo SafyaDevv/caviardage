@@ -21,10 +21,7 @@ poem_embeddings = model.encode(clean_df_v2["poem"].tolist(), convert_to_numpy=Tr
 def get_normalised_poem_embeddings():
     return normalize(poem_embeddings, axis=1)
 
-#export scaled than normalised poem embeddings to csv for use in cosine similarity
 poem_embeddings_normalised = normalize(poem_embeddings, axis=1)
-poem_embeddings_df = pandas.DataFrame(poem_embeddings, index=clean_df_v2.index)
-poem_embeddings_df.to_csv("files/poem_embeddings.csv", index=True)
 
 #encoding sequence of pos tags using TfidfVectorizer and adding them to matrix that will be use for cosine similarity
 pos_strings = clean_df_v2["poem-pos"].apply(
@@ -60,8 +57,5 @@ def get_poem_matrix():
 
 poem_matrix_normalized = normalize(poem_matrix, axis=1) #normalising each row
 
-## STORING IN DF THEN CSV ##
-
-poem_matrix_df = pandas.DataFrame(poem_matrix_normalized, index=clean_df_v2.index) #turning into dataframe to store as csv, using original dataframe index to be able to link back to poems later
-
-poem_matrix_df.to_csv("files/poem_matrix.csv", index=True)
+def get_poem_matrix_normalized():
+    return poem_matrix_normalized
