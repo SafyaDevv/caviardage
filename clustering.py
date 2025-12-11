@@ -18,28 +18,38 @@ from encoding_features import get_normalised_poem_embeddings
 
 from data_pipeline import clean_df_v2
 
+print(f"clean_df_v2 shape: {len(clean_df_v2)}")
 
 # Function to run kmeans clustering on poem embeddings
 # called in get_poem_clusters()
 def run_kmeans(n_clusters):
+    print("Running Kmeans clustering...")
     poems = get_normalised_poem_embeddings()
+
+    #DEBUG LINE
+    print(f"Original poems shape: {poems.shape}")
 
     # reducing dimensionality using PCA first then UMAP
     pca = PCA(n_components=50, random_state=42)
     poems_pca = pca.fit_transform(poems)
 
-    reducer = umap.UMAP(n_neighbors=15, n_components=15, metric='cosine', random_state=42, low_memory=False)
+    print(f"After PCA shape: {poems_pca.shape}")
+
+    reducer = umap.UMAP(n_neighbors=15, n_jobs=1, n_components=15, metric='cosine', random_state=42, low_memory=False)    
     reduced_poems = reducer.fit_transform(poems_pca)
+    print(f"After UMAP shape: {reduced_poems.shape}")
 
     # clustering
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     labels = kmeans.fit_predict(reduced_poems)
-    # print("Cluster labels:", labels)
-    
+
+    print(f"Labels shape: {labels.shape}")
+
     # Calculate Silhoutte Score
     score = silhouette_score(reduced_poems, labels, metric='cosine')
     print(f"Silhouette Score for {n_clusters} clusters: {score:.3f}")
 
+    print("Finishing Kmeans clustering...")
     return reduced_poems, labels, n_clusters
 
 poems, labels, n_clusters = run_kmeans(n_clusters=12)
@@ -95,7 +105,8 @@ def get_clustering_vis(poems, labels, poem_df_with_clusters):
 #creating df for visualisation
 
 #further reducing dimensions to 3D for visualisation
-    reducer_3d = umap.UMAP(n_neighbors=15, n_components=3, metric='cosine', random_state=42, low_memory=False)
+    print("Starting vis...")
+    reducer_3d = umap.UMAP(n_neighbors=15, n_jobs=1, n_components=3, metric='cosine', random_state=42, low_memory=False)
     poems = reducer_3d.fit_transform(poems)
 
     visualisation_df = pandas.DataFrame({

@@ -12,6 +12,7 @@ from data_pipeline import clean_df_v2
 
 ### EMBEDDING AND ENCODING FEATURES ###
 
+print("Generating and encoding features...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 #embedding poem into vectors using sentence_transformers, return an nd array
@@ -50,6 +51,8 @@ ids_encoded_scaled = StandardScaler().fit_transform(ids_encoded)
 
 #concatening the features into matrix
 poem_matrix = scipy.sparse.hstack((pos_vectors_scaled, num_features_scaled, ids_encoded_scaled)) 
+
+print("Feature generation and encoding complete.")
 
 #returning poem matrix function before normalisation
 def get_poem_matrix():

@@ -98,14 +98,43 @@ def get_overall_word_freq(how_many: int):
 #correlation matrix of numeric features before encoding categorical features
 corr = clean_df_v2.corr(numeric_only=True)
 
+#function to get counts of each theme
+def get_theme_counts():
+    themes = clean_df_v2["poem-theme"].unique().tolist()
+    theme_count = []
+
+    #setting up 2d array to hold counts
+    for theme in themes:
+        theme_count.append([theme, 0])
+
+    #counting occurrences of non empty themes
+    for entry in clean_df_v2["poem-theme"]:
+        if pandas.isna(entry):
+            theme_count[12][1] += 1
+        else:
+            for theme in theme_count:
+                if entry == theme[0]:
+                    theme[1] += 1
+
+    # #pie chart
+    # plot.figure(figsize=(8,8))
+    # plot.pie([count[1] for count in theme_count],
+    #             labels=[count[0] for count in theme_count],
+    #             autopct="%1.1f%%",
+    #             startangle=140)
+    # plot.title("Distribution of Poem Themes", fontsize=14)
+    # plot.tight_layout(pad=2.0)
+    # plot.show()
+    
+    # print(theme_count)
+
+# get_theme_counts()
 
 #cosine similarity between poems
 
 
 ### VISUALISATION ###
 #used in streamlit_app.py and report
-
-
 
 '''Function returning a pie chart showing an overview of the data cleaning process
 used in streamlit_app.py'''

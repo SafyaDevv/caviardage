@@ -54,7 +54,10 @@ df["poem-cluster-id"] = poem_clusters_df["cluster_id"]
 df["poem-theme"] = poem_clusters_df["theme"]
 
 ## EXPORTING VISUALISATION AS JSON##
+print("Starting exporting vis fig as json...")
 pio.write_json(vis_fig, "files/poem_clusters.json")
 
 #csv generation
+print("Exporting updated dataset as CSV...")
 df.to_csv("files/caviardage_dataset.csv", index=False)
+print("Dataset generation complete.")
