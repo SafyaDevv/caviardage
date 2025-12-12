@@ -18,8 +18,6 @@ from encoding_features import get_normalised_poem_embeddings
 
 from data_pipeline import clean_df_v2
 
-print(f"clean_df_v2 shape: {len(clean_df_v2)}")
-
 # Function to run kmeans clustering on poem embeddings
 # called in get_poem_clusters()
 def run_kmeans(n_clusters):
@@ -52,7 +50,9 @@ def run_kmeans(n_clusters):
     print("Finishing Kmeans clustering...")
     return reduced_poems, labels, n_clusters
 
-poems, labels, n_clusters = run_kmeans(n_clusters=12)
+if __name__ == "__main__":
+    poems, labels, n_clusters = run_kmeans(n_clusters=12)
+    print(f"clean_df_v2 shape: {len(clean_df_v2)}")
 
 ## START HERE 
 # FUNCTION THAT RETURNS POEM INDICES WITH CLUSTER IDS AND LABELS ##
@@ -137,16 +137,6 @@ def get_clustering_vis(poems, labels, poem_df_with_clusters):
         
     return fig
 
-## NOTE: The following code was used during development
-# and is kept here in case it's needed to improve clustering later ##
-
-# TESTING ZONE ##
-
-poem_clusters_df, vis_fig = clustering(visualisation=True)
-vis_fig.show()
-
-labels = poem_clusters_df["cluster_id"].to_numpy()
-
 ## LABELLING CLUSTERS ###
 # giving each cluster a label based on common themes in poems
 def get_top_terms(labels, cluster_id, n_terms=10): 
@@ -177,9 +167,7 @@ def print_top_terms(labels, n_clusters):
         print(f"\n[Cluster {cluster_id}] Top terms:")
         top_terms = get_top_terms(labels, cluster_id)
         print(", ".join(top_terms))
-
-print_top_terms(labels, n_clusters)
-      
+  
 # function to show example poems from each cluster
 def show_examples(labels, cluster_id, n=5):
     index = np.where(labels == cluster_id)[0][:n]
@@ -187,4 +175,16 @@ def show_examples(labels, cluster_id, n=5):
         print(f"\n[poem {i}] (cluster {cluster_id})")
         print(clean_df_v2.loc[i, "poem"])
 
-show_examples(labels, cluster_id=7, n=10)
+
+# TESTING ZONE ##
+
+if __name__ == "__main__":
+    poem_clusters_df, vis_fig = clustering(visualisation=True)
+    vis_fig.show()
+
+    print(f"Labels shape in testing zone: {labels.shape}")
+    poem_clusters_df["cluster_id"] = labels
+
+    # print_top_terms(labels, n_clusters)
+
+    # show_examples(labels, cluster_id=7, n=10)
